@@ -1,0 +1,35 @@
+﻿using Ch.Elca.Iiop;
+using System;
+using System.Runtime.Remoting;
+using System.Runtime.Remoting.Channels;
+
+namespace CorbaHubServer
+{
+    public class CorbaHubServer
+    {
+        // Set port number
+        private const int NAMESERVER_PORT = 1080;
+
+        // Define name
+        private const string NAME = "CSharp_Object";
+
+        static void Main(string[] args)
+        {
+            try
+            {
+				// Enable IIOP Channel, add server port
+                ChannelServices.RegisterChannel(new IiopChannel(NAMESERVER_PORT), false);
+				
+				// Enable marshalling of server's object implementation 
+                RemotingServices.Marshal(new CorbaHubObject(), NAME);
+
+                Console.WriteLine("CSharp server is running...");
+                Console.ReadKey();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception source: {0}", e.Source);
+            }
+        }
+    }
+}

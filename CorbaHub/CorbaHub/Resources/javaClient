@@ -1,0 +1,38 @@
+import java.util.Properties;
+import java.util.stream.IntStream;
+
+import org.omg.CORBA.ORB;
+import org.omg.CosNaming.NameComponent;
+import org.omg.CosNaming.NamingContext;
+import org.omg.CosNaming.NamingContextHelper;
+
+import *.OBJECTHelper;
+import *.OBJECT;
+
+public class CorbaHubClient 
+{
+    // Set localhost string
+    private static final String HOST = "localhost";
+
+    // Port number of Jave Server/Object
+    private static final int J_SERVER_PORT = 1050;
+
+    // Name reference of Java Server/Object
+    private static final String J_SERVER_NAME = "Java_Object";
+
+    private static OBJECT getStub(String orbhost, int orbport, String name) throws Exception 
+    {
+        Properties p = new Properties();
+        p.put("org.omg.CORBA.ORBClass", "com.sun.corba.se.impl.orb.ORBImpl");
+        p.put("org.omg.CORBA.ORBInitialHost", orbhost);
+        p.put("org.omg.CORBA.ORBInitialPort", Integer.toString(orbport));
+        ORB orb = ORB.init(new String[0], p);
+        NamingContext nc = NamingContextHelper.narrow(orb.resolve_initial_references("NameService"));
+        return OBJECTHelper.narrow(nc.resolve(new NameComponent[] { new NameComponent(name, "") }));
+    }
+    
+    public static void main(String[] args) throws Exception 
+    {
+        OBJECT moduleObject = getStub(J_HOST, J_SERVER_PORT, J_SERVER_NAME);
+    }
+}

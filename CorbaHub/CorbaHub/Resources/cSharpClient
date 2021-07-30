@@ -1,0 +1,48 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Remoting.Channels;
+
+using omg.org.CosNaming;
+
+using Ch.Elca.Iiop;
+using Ch.Elca.Iiop.Services;
+
+using *;
+
+namespace CorbaHubClient
+{
+    public class CorbaHubClient
+    { 
+        // Set localhost string
+        private const string HOST = "localhost";
+
+        // Port number of CSharp Server/Object
+        private const int C_SERVER_PORT = 1080;
+
+        // Name reference of CSharp Server/Object 
+        private const string C_SERVER_NAME = "CSharp_Object";
+
+        /// <summary>
+        /// Set up Naming Service referencing
+        /// </summary>
+        /// <param name="orbhost"></param>
+        /// <param name="orbport"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        private static OBJECT GetStub(string orbhost, int orbport, string name)
+        {
+            NamingContext nc = CorbaInit.GetInit().GetNameService(orbhost, orbport);
+            return (OBJECT)nc.resolve(new NameComponent[] { new NameComponent(name, "") });
+        }
+
+        public static void Main(string[] args)
+        {
+            // Connect to IIOP protocol channel
+            ChannelServices.RegisterChannel(new IiopClientChannel(), false);
+
+            // Connect to server over IIOP through port and name specification
+            var moduleObject = GetStub(HOST, C_SERVER_PORT, C_SERVER_NAME)
+        }
+    }
+}

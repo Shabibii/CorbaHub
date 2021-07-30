@@ -1,0 +1,7 @@
+
+import *.OBJECTPOA;
+
+public class CorbaHubObject extends OBJECTPOA 
+{
+   
+}

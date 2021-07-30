@@ -1,0 +1,59 @@
+
+import java.util.Properties;
+
+import org.omg.CORBA.ORB;
+import org.omg.CosNaming.NamingContextExt;
+import org.omg.CosNaming.NamingContextExtHelper;
+import org.omg.PortableServer.POA;
+import org.omg.PortableServer.POAHelper;
+
+import *.OBJECTHelper;
+
+public class CorbaHubServer 
+{
+	// Set localhost
+    private static final String HOST = "localhost";
+	
+	// Set port number
+    private static final String NAMESERVER_PORT = "1050";
+	
+	// Define name 
+    private static final String NAME = "Java_Object";
+    
+    public static void main(String[] args) throws Exception 
+    {
+        try
+        {
+            Properties p = new Properties();
+            p.put( "org.omg.CORBA.ORBClass", "com.sun.corba.se.impl.orb.ORBImpl" );
+            p.put( "org.omg.CORBA.ORBInitialHost", HOST );
+            p.put( "org.omg.CORBA.ORBInitialPort", NAMESERVER_PORT );
+            
+            // Initiate connection to CORBA ORB cloud        
+            ORB orb = ORB.init( args, p );
+
+            // Get reference to root POA
+            POA poa = POAHelper.narrow( orb.resolve_initial_references( "RootPOA" ) );
+            poa.the_POAManager().activate();
+
+            // Create server object
+            CorbaHubObject objectServer = new CorbaHubObject();
+
+            // Get reference to Name Service within ORB cloud
+            NamingContextExt nc = NamingContextExtHelper.narrow(orb.resolve_initial_references("NameService"));
+            
+            // Bind object to a name (objectServer)
+            nc.rebind(nc.to_name(NAME), OBJECTHelper.narrow(poa.servant_to_reference(objectServer)));
+
+            // Inform of running server
+            System.out.println("Java server is running...");
+
+            // Run orb to make public methods accessible through appropriate commands
+            orb.run(); 
+        }
+        catch (Exception e)
+        {
+            System.out.println("Exception: " + e.getMessage());
+        }
+    }
+}

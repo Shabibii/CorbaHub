@@ -1,0 +1,11 @@
+module CorbaHub
+{
+    module IDL
+    {
+        interface Mapping
+        {
+            long calc(in long a, in long b);
+            string tag(in string label);
+        };
+    };
+};
